@@ -1,8 +1,9 @@
 package com.tmb.EmployeeManagementApp;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
 @SpringBootApplication
 public class EmployeeManagementApp {
@@ -34,49 +35,52 @@ public class EmployeeManagementApp {
 
 @RestController
 class EmployeeController {
-    private final EmployeeJpaRepository jpaRepository;
 
-    EmployeeController(EmployeeJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
+    private final EmployeeRepository repository;
+
+    public EmployeeController(EmployeeRepository repository) {
+        this.repository = repository;
     }
 
-    @GetMapping("/empoyees")
+    @GetMapping("/employees")
     public List<Employee> getAll() {
-        return jpaRepository.findAll();
+        return repository.findAll();
     }
 
-    @GetMapping("/empoyees/{id}")
+    @GetMapping("/employees/{id}")
     public Optional<Employee> getOne(@PathVariable Long id) {
-        return jpaRepository.findById(id);
+        return repository.findById(id);
     }
 
-    @PostMapping("/empoyees")
+    @PostMapping("/employees")
     public Employee create(@RequestBody Employee employee) {
         System.out.println("employee = " + employee);
-        return jpaRepository.save(employee);
+        return repository.save(employee);
     }
 
-    @PutMapping("/empoyees/{id}")
+    @PutMapping("/employees/{id}")
     public Optional<Employee> update(@RequestBody Employee newEmployee, @PathVariable Long id) {
-        Optional<Employee> existingEmp = jpaRepository.findById(id);
+        Optional<Employee> existingEmp = repository.findById(id);
         if (existingEmp.isPresent()) {
             Employee dbEmployee = existingEmp.get();
             dbEmployee.setName(newEmployee.getName());
             dbEmployee.setRole(newEmployee.getRole());
-            jpaRepository.save(dbEmployee);
+            repository.save(dbEmployee);
         } else {
             System.out.println("Employee  not found");
         }
-        return jpaRepository.findById(id);
+        return repository.findById(id);
     }
 
-    @DeleteMapping("/empoyees/{id}")
+    @DeleteMapping("/employees/{id}")
     public void deleteOne(@PathVariable Long id) {
-        jpaRepository.deleteById(id);
+        repository.deleteById(id);
     }
+
 }
 
-interface EmployeeJpaRepository extends JpaRepository<Employee, Long> {
+interface EmployeeRepository extends JpaRepository<Employee, Long> {
+
 }
 
 @Entity
@@ -88,6 +92,7 @@ class Employee {
     private String role;
 
     public Employee() {
+
     }
 
     public Employee(String name, String role) {
@@ -149,14 +154,14 @@ class Employee {
 class LoadDefaultData {
 
     @Bean
-    CommandLineRunner initializeDatabase(EmployeeJpaRepository jpaRepository) {
+    CommandLineRunner initializeDatabase(EmployeeRepository repository) {
         return args -> {
             Employee employee1 = new Employee("John", "Dev");
-            Employee employee2 = new Employee("Pierre", "IT");
-            Employee employee3 = new Employee("Paul", "Tested");
-            Employee employee4 = new Employee("Djamila", "Doc");
-            Employee employee5 = new Employee("Axel", "Dev");
-            jpaRepository.saveAll(List.of(employee1, employee2, employee3, employee4, employee5));
+            Employee employee2 = new Employee("Pierre", "DevOps");
+            Employee employee3 = new Employee("Paul", "CyberSecurity");
+            Employee employee4 = new Employee("Djamila", "Data");
+            Employee employee5 = new Employee("Axel", "Manager");
+            repository.saveAll(List.of(employee1, employee2, employee3, employee4, employee5));
         };
     }
 }
