@@ -49,6 +49,11 @@ class UserController {
 	@PostMapping("/users")
 	public User create(@RequestBody User user) {
 		System.out.println("create user = " + user);
+		// if (user.getName() == null || user.getEmail() == null) {
+		// System.out.println("user name or email can not be blank");
+		// return null;
+		// }
+		System.out.println("user going to save ");
 		return userRepository.save(user);
 	}
 
