@@ -61,6 +61,8 @@ class UserController {
 			dbUser.setEmail(updateUserRequest.getEmail());
 			dbUser.setName(updateUserRequest.getName());
 			userRepository.save(dbUser);
+		}else {
+			System.out.println("User not found");
 		}
 		return userRepository.findById(id);
 	}
