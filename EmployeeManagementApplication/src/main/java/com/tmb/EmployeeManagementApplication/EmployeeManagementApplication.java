@@ -58,12 +58,12 @@ class EmployeeController {
 	}
 
 	@PutMapping("/empoyees/{id}")
-	public Optional<Employee> update(@RequestBody Employee employee, @PathVariable Long id) {
+	public Optional<Employee> update(@RequestBody Employee newEmployee, @PathVariable Long id) {
 		Optional<Employee> existingEmp = jpaRepository.findById(id);
 		if (existingEmp.isPresent()) {
 			Employee dbEmployee = existingEmp.get();
-			dbEmployee.setName(employee.getName());
-			dbEmployee.setRole(employee.getRole());
+			dbEmployee.setName(newEmployee.getName());
+			dbEmployee.setRole(newEmployee.getRole());
 			jpaRepository.save(dbEmployee);
 		} else {
 			System.out.println("Employee  not found");
